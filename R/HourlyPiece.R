@@ -73,11 +73,10 @@ HourlyPieceServer_upload <- function(input,output,session,dms_token) {
 #' HourlyPieceServer_view()
 HourlyPieceServer_view <- function(input,output,session,dms_token) {
 
-  text_HourlyPiece_FBillno=tsui::var_text('text_HourlyPiece_FBillno')
+  text_HourlyPiece_FProductionNumber=tsui::var_text('text_HourlyPiece_FProductionNumber')
   shiny::observeEvent(input$btn_HourlyPiece_view,{
-    FProductionNumber=text_HourlyPiece_FBillno()
+    FProductionNumber=text_HourlyPiece_FProductionNumber()
     data=mdlHourlyPieceratePkg::HourlyPiecerate_view(token = dms_token,FProductionNumber = FProductionNumber )
-
 
     tsui::run_dataTable2(id = 'dt_HourlyPiece',data = data)
 
@@ -119,13 +118,11 @@ HourlyPieceServer_download <- function(input,output,session,dms_token) {
 #' HourlyPieceServer_delete()
 HourlyPieceServer_delete <- function(input,output,session,dms_token) {
 
-  text_HourlyPiece_FBillno_delete=tsui::var_text('text_HourlyPiece_FBillno_delete')
-  text_HourlyPiece_Fseq_delete=tsui::var_text('text_HourlyPiece_Fseq_delete')
+  text_HourlyPiece_FProductionNumber_delete=tsui::var_text('text_HourlyPiece_FProductionNumber_delete')
 
   shiny::observeEvent(input$btn_HourlyPiece_delete,{
-    FProductionNumber=text_HourlyPiece_FBillno_delete()
-    Fseq=text_HourlyPiece_Fseq_delete()
-    mdlHourlyPieceratePkg::HourlyPiecerate_delete(token = dms_token,FProductionNumber = FProductionNumber,Fseq =Fseq)
+    FProductionNumber=text_HourlyPiece_FProductionNumber_delete()
+    mdlHourlyPieceratePkg::HourlyPiecerate_delete(token = dms_token,FProductionNumber = FProductionNumber)
 
     tsui::pop_notice('删除成功')
 
