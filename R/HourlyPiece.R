@@ -1,63 +1,4 @@
-#' 预览
-#'
-#' @param input 输入
-#' @param output 输出
-#' @param session 会话
-#' @param dms_token 口令
-#'
-#' @return 返回值
-#' @export
-#'
-#' @examples
-#' HourlyPieceServer_preview()
-HourlyPieceServer_preview <- function(input,output,session,dms_token) {
 
-  file_HourlyPiece=tsui::var_file('file_HourlyPiece')
-shiny::observeEvent(input$btn_HourlyPiece_pre,{
-
-  filename=file_HourlyPiece()
-  if(is.null(filename)){
-    tsui::pop_notice('请上传需要预览的文件')
-  }
-  else{
-
-    data=mdlHourlyPieceratePkg::HourlyPiecerate_preview(token = dms_token,file_name = filename)
-
-    tsui::run_dataTable2(id = 'dt_HourlyPiece',data = data)
-
-  }
-})
-}
-
-
-#' 上传
-#'
-#' @param input 输入
-#' @param output 输出
-#' @param session 会话
-#' @param dms_token 口令
-#'
-#' @return 返回值
-#' @export
-#'
-#' @examples
-#' HourlyPieceServer_upload()
-HourlyPieceServer_upload <- function(input,output,session,dms_token) {
-
-  file_HourlyPiece=tsui::var_file('file_HourlyPiece')
-  shiny::observeEvent(input$btn_HourlyPiece_upload,{
-
-    filename=file_HourlyPiece()
-    if(is.null(filename)){
-      tsui::pop_notice('请选择需要上传的文件')
-    }
-    else{
-      mdlHourlyPieceratePkg::HourlyPiecerate_upload(token = dms_token,file_name = filename)
-      tsui::pop_notice("上传成功")
-
-    }
-  })
-}
 
 #' 按单据编号查询
 #'
@@ -73,16 +14,24 @@ HourlyPieceServer_upload <- function(input,output,session,dms_token) {
 #' HourlyPieceServer_view()
 HourlyPieceServer_view <- function(input,output,session,dms_token) {
 
-  text_HourlyPiece_FProductionNumber=tsui::var_text('text_HourlyPiece_FProductionNumber')
+  text_HourlyPiece_FYEAR=tsui::var_text('text_HourlyPiece_FYEAR')
+
+  text_HourlyPiece_FMONTH=tsui::var_text('text_HourlyPiece_FMONTH')
   shiny::observeEvent(input$btn_HourlyPiece_view,{
-    FProductionNumber=text_HourlyPiece_FProductionNumber()
-    data=mdlHourlyPieceratePkg::HourlyPiecerate_view(token = dms_token,FProductionNumber = FProductionNumber )
+    FYEAR=text_HourlyPiece_FYEAR()
+
+    FMONTH=text_HourlyPiece_FMONTH()
+    data=mdlHourlyPieceratePkg::HourlyPiecerate_view(dms_token =dms_token ,FYEAR = FYEAR,FMONTH =FMONTH )
 
     tsui::run_dataTable2(id = 'dt_HourlyPiece',data = data)
+    tsui::run_download_xlsx(id = 'dl_HourlyPiece',data = data,filename = '员工工资表.xlsx')
 
   })
 }
-#' 按下载数据
+
+
+
+#' 按明细查询
 #'
 #' @param input 输入
 #' @param output 输出
@@ -93,42 +42,23 @@ HourlyPieceServer_view <- function(input,output,session,dms_token) {
 #' @export
 #'
 #' @examples
-#' HourlyPieceServer_download()
-HourlyPieceServer_download <- function(input,output,session,dms_token) {
+#' HourlyPieceServer_detail_view()
+HourlyPieceServer_detail_view <- function(input,output,session,dms_token) {
 
-  date=mdlHourlyPieceratePkg::HourlyPiecerate_viewAll(token = dms_token)
+  text_HourlyPiece_FYEAR=tsui::var_text('text_HourlyPiece_FYEAR')
 
-  data=mdlHourlyPieceratePkg::HourlyPiecerate_viewAll(token = dms_token)
+  text_HourlyPiece_FMONTH=tsui::var_text('text_HourlyPiece_FMONTH')
+  shiny::observeEvent(input$btn_HourlyPiece_detail_view,{
+    FYEAR=text_HourlyPiece_FYEAR()
 
-  tsui::run_download_xlsx(id = 'dl_HourlyPiece',data = data,filename = '计时计件工资表.xlsx')
+    FMONTH=text_HourlyPiece_FMONTH()
+    data=mdlHourlyPieceratePkg::HourlyPiecerate_detail_view(dms_token =dms_token ,FYEAR = FYEAR,FMONTH =FMONTH )
 
-}
-
-#' 按单据编号和行号删除
-#'
-#' @param input 输入
-#' @param output 输出
-#' @param session 会话
-#' @param dms_token 口令
-#'
-#' @return 返回值
-#' @export
-#'
-#' @examples
-#' HourlyPieceServer_delete()
-HourlyPieceServer_delete <- function(input,output,session,dms_token) {
-
-  text_HourlyPiece_FProductionNumber_delete=tsui::var_text('text_HourlyPiece_FProductionNumber_delete')
-
-  shiny::observeEvent(input$btn_HourlyPiece_delete,{
-    FProductionNumber=text_HourlyPiece_FProductionNumber_delete()
-    mdlHourlyPieceratePkg::HourlyPiecerate_delete(token = dms_token,FProductionNumber = FProductionNumber)
-
-    tsui::pop_notice('删除成功')
+    tsui::run_dataTable2(id = 'dt_HourlyPiece',data = data)
+    tsui::run_download_xlsx(id = 'dl_HourlyPiece_detail',data = data,filename = '员工工资明细表.xlsx')
 
   })
 }
-
 
 #' 处理逻辑
 #'
@@ -145,13 +75,9 @@ HourlyPieceServer_delete <- function(input,output,session,dms_token) {
 HourlyPieceServer <- function(input,output,session,dms_token) {
 
 
-  HourlyPieceServer_preview(input=input,output=output,session=session,dms_token=dms_token)
-
-  HourlyPieceServer_upload(input=input,output=output,session=session,dms_token=dms_token)
+  HourlyPieceServer_detail_view(input=input,output=output,session=session,dms_token=dms_token)
 
   HourlyPieceServer_view(input=input,output=output,session=session,dms_token=dms_token)
-  HourlyPieceServer_delete(input=input,output=output,session=session,dms_token=dms_token)
 
-  HourlyPieceServer_download(input=input,output=output,session=session,dms_token=dms_token)
 
 }
