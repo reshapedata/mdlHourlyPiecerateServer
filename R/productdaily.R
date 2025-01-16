@@ -124,6 +124,8 @@ productdailyServer_view <- function(input,output,session,dms_token) {
 #' productdailyServer_delete()
 productdailyServer_delete <- function(input,output,session,dms_token) {
 
+  text_productdaily_FSPECIFICATION_delete=tsui::var_text('text_productdaily_FSPECIFICATION_delete')
+
   text_productdaily_FProductLots_delete=tsui::var_text('text_productdaily_FProductLots_delete')
 
   shiny::observeEvent(input$btn_productdaily_delete,{
@@ -133,8 +135,15 @@ productdailyServer_delete <- function(input,output,session,dms_token) {
     tsui::pop_notice('删除成功')
 
   })
-}
+  #按图号删除
+  shiny::observeEvent(input$btn_productdaily_FSPECIFICATION_delete,{
+    FSPECIFICATION=text_productdaily_FSPECIFICATION_delete()
+    mdlHourlyPieceratePkg::productdaily_FSPECIFICATION_delete(dms_token = dms_token,FSPECIFICATION = FSPECIFICATION)
 
+    tsui::pop_notice('删除成功')
+
+  })
+}
 
 #' 处理逻辑
 #'
